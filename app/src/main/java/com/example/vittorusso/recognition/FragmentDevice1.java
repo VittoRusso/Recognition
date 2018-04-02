@@ -109,7 +109,9 @@ public class FragmentDevice1 extends Fragment {
                     // Show all the supported services and characteristics on the user interface.
                     displayGattServices(mBluetoothLeServiceAccelerometer.getSupportedGattServices());
                 } else if (BluetoothLeServiceAccelerometer.ACTION_DATA_AVAILABLE.equals(action)) {
-                    displayData(intent.getStringExtra(BluetoothLeServiceAccelerometer.EXTRA_DATA));
+                    String data = intent.getStringExtra(BluetoothLeServiceAccelerometer.EXTRA_DATA);
+                    displayData(data);
+                    mListener.onFragment1Interaction(data);
                 }
             }
         }
@@ -188,10 +190,7 @@ public class FragmentDevice1 extends Fragment {
     }
 
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
 
-    }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
@@ -227,12 +226,6 @@ public class FragmentDevice1 extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -262,6 +255,12 @@ public class FragmentDevice1 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ((controlActivity) getActivity()).setUpdateFrag1(new controlActivity.updateFragment1() {
+            @Override
+            public void connectFrag1() {
+                mBluetoothLeServiceAccelerometer.connect(mDeviceAddress);
+            }
+        });
         return inflater.inflate(R.layout.fragment_fragment_device1, container, false);
     }
 
@@ -312,6 +311,14 @@ public class FragmentDevice1 extends Fragment {
 
     }
 
+    public interface OnFragmentInteractionListener {
+        void onFragment1Interaction(String data);
+    }
+
+
+    public void setmListener1 (OnFragmentInteractionListener mListener){
+        this.mListener = mListener;
+    }
 
 
 }

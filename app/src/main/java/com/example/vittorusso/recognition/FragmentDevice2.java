@@ -108,7 +108,9 @@ public class FragmentDevice2 extends Fragment {
                 } else if (BluetoothLeServiceHeart.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                     displayGattServices2(mBluetoothLeService2.getSupportedGattServices());
                 } else if (BluetoothLeServiceHeart.ACTION_DATA_AVAILABLE.equals(action)) {
-                    displayData(intent.getStringExtra(BluetoothLeServiceHeart.EXTRA_DATA));
+                    String data = intent.getStringExtra(BluetoothLeServiceHeart.EXTRA_DATA);
+                    displayData(data);
+                    mListener2.onFragment2Interaction(data);
                 }
             }
         }
@@ -179,18 +181,13 @@ public class FragmentDevice2 extends Fragment {
                 gattCharacteristicData.add(gattCharacteristicGroupData);
             }
         }
-        /*startReading();
+        startReading2();
         try {Thread.sleep(500);}
         catch (InterruptedException ex) {android.util.Log.d("Hello: ", ex.toString());}
-        startReading();*/
+        startReading2();
         System.out.println("displayGatt2");
     }
 
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-
-    }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
@@ -216,6 +213,7 @@ public class FragmentDevice2 extends Fragment {
 
     private void updateConnectionState(final int resourceId) {
         mConnectionState2.setText(resourceId);
+
     }
 
     private void displayData(String data) {
@@ -228,12 +226,6 @@ public class FragmentDevice2 extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener2 = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -263,6 +255,12 @@ public class FragmentDevice2 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ((controlActivity) getActivity()).setUpdateFrag2(new controlActivity.updateFragment2() {
+            @Override
+            public void connectFrag2() {
+             mBluetoothLeService2.connect(mDeviceAddress2);
+            }
+        });
         return inflater.inflate(R.layout.fragment_fragment_device2, container, false);
     }
 
@@ -310,5 +308,13 @@ public class FragmentDevice2 extends Fragment {
         super.onDetach();
         mListener2 = null;
 
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onFragment2Interaction(String data);
+    }
+
+    public void setmListener2 (OnFragmentInteractionListener mListener2){
+        this.mListener2 = mListener2;
     }
 }

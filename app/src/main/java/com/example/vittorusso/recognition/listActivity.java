@@ -186,6 +186,8 @@ public class listActivity extends AppCompatActivity{
             i.putExtra("deviceNames",deviceNames);
             i.putExtra("deviceAddresses",deviceAddresses);
             startActivity(i);
+            deviceAddresses.clear();
+            deviceNames.clear();
         }else{
             AlertDialog alertDialog = new AlertDialog.Builder(listActivity.this).create();
             alertDialog.setTitle("ALERT: PLEASE SELECT TWO DEVICES");
