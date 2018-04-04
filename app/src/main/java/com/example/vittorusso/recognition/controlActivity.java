@@ -35,6 +35,7 @@ public class controlActivity extends AppCompatActivity {
         deviceAddresses = i.getStringArrayListExtra("deviceAddresses");
 
         getSupportActionBar().setTitle(R.string.title_devices);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
         if (savedInstanceState == null) {
             if(deviceNames.contains(LilyHAR)){

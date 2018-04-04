@@ -48,6 +48,8 @@ public class listActivity extends AppCompatActivity{
         setContentView(R.layout.activity_list);
 
         getSupportActionBar().setTitle(R.string.title_devices);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
         mHandler = new Handler();
 
         lv = findViewById(R.id.listView);
