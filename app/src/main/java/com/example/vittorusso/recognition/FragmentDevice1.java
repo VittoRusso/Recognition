@@ -20,6 +20,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,17 +44,16 @@ public class FragmentDevice1 extends Fragment {
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
+    private TextView tvName;
     private TextView mConnectionState;
-    private TextView mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
-    private ExpandableListView mGattServicesList;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeServiceAccelerometer mBluetoothLeServiceAccelerometer;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
-    private TextView tvName,tvAddress;
+    private ImageView ivConnect;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -100,17 +100,15 @@ public class FragmentDevice1 extends Fragment {
                 System.out.println("Accelerometer Callback Receiver");
                 if (BluetoothLeServiceAccelerometer.ACTION_GATT_CONNECTED.equals(action)) {
                     mConnected = true;
-                    updateConnectionState(R.string.connected);
+                    updateConnectionState(R.string.connected, R.mipmap.onblue);
                 } else if (BluetoothLeServiceAccelerometer.ACTION_GATT_DISCONNECTED.equals(action)) {
                     mConnected = false;
-                    updateConnectionState(R.string.disconnected);
-                    clearUI();
+                    updateConnectionState(R.string.disconnected, R.mipmap.offblue);
                 } else if (BluetoothLeServiceAccelerometer.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                     // Show all the supported services and characteristics on the user interface.
                     displayGattServices(mBluetoothLeServiceAccelerometer.getSupportedGattServices());
                 } else if (BluetoothLeServiceAccelerometer.ACTION_DATA_AVAILABLE.equals(action)) {
                     String data = intent.getStringExtra(BluetoothLeServiceAccelerometer.EXTRA_DATA);
-                    displayData(data);
                     mListener.onFragment1Interaction(data);
                 }
             }
@@ -201,27 +199,13 @@ public class FragmentDevice1 extends Fragment {
         return intentFilter;
     }
 
-    private void displayMAC() {
-        tvAddress.setText(mParam2);
-    }
 
-    private void displayName() {
-        tvName.setText(mParam1);
-    }
 
-    private void clearUI() {
-        mDataField.setText(R.string.no_data);
-    }
-
-    private void updateConnectionState(final int resourceId) {
+    private void updateConnectionState(final int resourceId, final int resourceId2) {
         mConnectionState.setText(resourceId);
+        ivConnect.setImageResource(resourceId2);
     }
 
-    private void displayData(String data) {
-        if (data != null) {
-            mDataField.setText(data);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -270,11 +254,10 @@ public class FragmentDevice1 extends Fragment {
         Intent gattServiceIntent = new Intent(getActivity(), BluetoothLeServiceAccelerometer.class);
         getActivity().bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-        mDataField = getView().findViewById(R.id.data_value);
         mConnectionState = getView().findViewById(R.id.connection_state);
-        tvName = getView().findViewById(R.id.device_name);
-        tvAddress = getView().findViewById(R.id.device_address);
-
+        ivConnect = getView().findViewById(R.id.ivFrag1);
+        tvName = getView().findViewById(R.id.tvName1);
+        tvName.setText(R.string.tvName1);
     }
 
     @Override
@@ -286,8 +269,6 @@ public class FragmentDevice1 extends Fragment {
             final boolean result = mBluetoothLeServiceAccelerometer.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
-        displayName();
-        displayMAC();
     }
 
 

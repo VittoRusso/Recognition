@@ -7,19 +7,35 @@
     android:orientation="vertical"
     tools:context=".controlActivity">
 
-    <FrameLayout
-        android:id="@+id/linearFrag1"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="10"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/linearFrag2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-    <FrameLayout
-        android:id="@+id/linearFrag2"
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/linearFrag1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    </FrameLayout>
+    </LinearLayout>
 </LinearLayout>

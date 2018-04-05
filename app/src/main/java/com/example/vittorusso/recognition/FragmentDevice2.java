@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -19,9 +18,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,17 +41,17 @@ public class FragmentDevice2 extends Fragment {
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
+    private TextView tvName;
     private TextView mConnectionState2;
-    private TextView mDataField2;
     private String mDeviceName2;
     private String mDeviceAddress2;
-    private ExpandableListView mGattServicesList2;
     private BluetoothAdapter mBluetoothAdapter2;
     private BluetoothLeServiceHeart mBluetoothLeService2;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics2 = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected2 = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic2;
-    private TextView tvName2,tvAddress2;
+    private ImageView ivConnect;
+
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -100,16 +100,14 @@ public class FragmentDevice2 extends Fragment {
                 System.out.println("HeartRate Callback Receiver");
                 if (BluetoothLeServiceHeart.ACTION_GATT_CONNECTED.equals(action)) {
                     mConnected2 = true;
-                    updateConnectionState(R.string.connected);
+                    updateConnectionState(R.string.connected, R.mipmap.onblue);
                 } else if (BluetoothLeServiceHeart.ACTION_GATT_DISCONNECTED.equals(action)) {
                     mConnected2 = false;
-                    updateConnectionState(R.string.disconnected);
-                    clearUI();
+                    updateConnectionState(R.string.disconnected, R.mipmap.offblue);
                 } else if (BluetoothLeServiceHeart.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                     displayGattServices2(mBluetoothLeService2.getSupportedGattServices());
                 } else if (BluetoothLeServiceHeart.ACTION_DATA_AVAILABLE.equals(action)) {
                     String data = intent.getStringExtra(BluetoothLeServiceHeart.EXTRA_DATA);
-                    displayData(data);
                     mListener2.onFragment2Interaction(data);
                 }
             }
@@ -198,29 +196,12 @@ public class FragmentDevice2 extends Fragment {
         return intentFilter;
     }
 
-    private void displayMAC() {
-        tvAddress2.setText(mParam2);
-    }
 
-    private void displayName() {
-        tvName2.setText(mParam1);
-    }
-
-    private void clearUI() {
-        mDataField2.setText(R.string.no_data);
-    }
-
-
-    private void updateConnectionState(final int resourceId) {
+    private void updateConnectionState(final int resourceId, final int resourceId2) {
         mConnectionState2.setText(resourceId);
-
+        ivConnect.setImageResource(resourceId2);
     }
 
-    private void displayData(String data) {
-        if (data != null) {
-            mDataField2.setText(data);
-        }
-    }
 
 
     @Override
@@ -261,6 +242,7 @@ public class FragmentDevice2 extends Fragment {
              mBluetoothLeService2.connect(mDeviceAddress2);
             }
         });
+
         return inflater.inflate(R.layout.fragment_fragment_device2, container, false);
     }
 
@@ -270,10 +252,10 @@ public class FragmentDevice2 extends Fragment {
         Intent gattServiceIntent2 = new Intent(getActivity(), BluetoothLeServiceHeart.class);
         getActivity().bindService(gattServiceIntent2, mServiceConnection2, BIND_AUTO_CREATE);
 
-        mDataField2 = getView().findViewById(R.id.data_value2);
         mConnectionState2 = getView().findViewById(R.id.connection_state2);
-        tvName2 = getView().findViewById(R.id.device_name2);
-        tvAddress2 = getView().findViewById(R.id.device_address2);
+        ivConnect = getView().findViewById(R.id.ivFrag2);
+        tvName = getView().findViewById(R.id.tvName2);
+        tvName.setText(R.string.tvName2);
     }
 
     @Override
@@ -285,8 +267,6 @@ public class FragmentDevice2 extends Fragment {
             final boolean result = mBluetoothLeService2.connect(mDeviceAddress2);
             Log.d(TAG, "Connect request result=" + result);
         }
-        displayName();
-        displayMAC();
     }
 
 

@@ -1,6 +1,13 @@
 package com.example.vittorusso.recognition;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -16,6 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 1;
 
     private String TAG = "TAG";
+
+    private SharedPreferences share;
+    private SharedPreferences.Editor editor;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         getSupportActionBar().setTitle(R.string.title_devices);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
         tvEmail = findViewById(R.id.tvEmail);
@@ -44,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         btnHist = findViewById(R.id.btnHistorial);
         btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setSize(SignInButton.SIZE_STANDARD);
+
+        share = getPreferences(MODE_PRIVATE);
+        editor = share.edit();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
@@ -58,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         btnRecog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), listActivity.class);
+                Intent i = new Intent(getApplicationContext(), controlActivity.class);
                 startActivity(i);
             }
         });
@@ -68,10 +85,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
+        update(account);
     }
 
-    private void updateUI(GoogleSignInAccount account) {
+    private void update(GoogleSignInAccount account) {
         if(account == null){
             isLogged = false;
             btnHist.setClickable(false);
@@ -81,12 +98,33 @@ public class MainActivity extends AppCompatActivity {
             btnHist.setClickable(true);
             btnRecog.setClickable(true);
             tvEmail.setText(account.getEmail());
-            placeImage();
+            editor.putString(getString(R.string.emailKey),account.getEmail());
+            editor.commit();
+            placeImage(account.getPhotoUrl());
+            Toast.makeText(this,"User Login Successful",Toast.LENGTH_LONG).show();
         }
     }
 
-    private void placeImage() {
+    private void placeImage(Uri url) {
+        if(url != null){
+            Picasso.get().load(url.toString()).into(ivPic, new Callback() {
+                @Override
+                public void onSuccess() {
+                    Bitmap imageBitmap = ((BitmapDrawable) ivPic.getDrawable()).getBitmap();
+                    RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
+                    imageDrawable.setCircular(true);
+                    imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                    ivPic.setImageDrawable(imageDrawable);
+                }
 
+                @Override
+                public void onError(Exception e) {
+
+                }
+            });
+        }else{
+            Picasso.get().load(R.mipmap.default_picture).into(ivPic);
+        }
     }
 
 
@@ -114,10 +152,10 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            updateUI(account);
+            update(account);
         } catch (ApiException e) {
             Log.v(TAG, "signInResult:failed code=" + e.getStatusCode());
-            updateUI(null);
+            update(null);
         }
     }
 

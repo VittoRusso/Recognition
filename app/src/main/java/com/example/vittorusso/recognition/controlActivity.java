@@ -1,6 +1,11 @@
 package com.example.vittorusso.recognition;
 
+import android.app.ActionBar;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -8,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -15,11 +21,15 @@ public class controlActivity extends AppCompatActivity {
 
     private ArrayList<String> deviceNames = new ArrayList<>();
     private ArrayList<String> deviceAddresses = new ArrayList<>();
+    private BluetoothAdapter mBluetoothAdapter;
 
     private FragmentDevice1 Frag1;
     private FragmentDevice2 Frag2;
+
     private String LilyHR = "LilyPad HeartR";
     private String LilyHAR = "LilyPad HAR";
+    private String MacLilyHR = "DA:37:F6:57:FE:83";
+    private String MacLilyHAR = "F8:76:6C:D1:B2:1C";
 
     private updateFragment1 upFrag1;
     private updateFragment2 upFrag2;
@@ -30,34 +40,40 @@ public class controlActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
-        Intent i = getIntent();
-        deviceNames = i.getStringArrayListExtra("deviceNames");
-        deviceAddresses = i.getStringArrayListExtra("deviceAddresses");
 
         getSupportActionBar().setTitle(R.string.title_devices);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         if (savedInstanceState == null) {
-            if(deviceNames.contains(LilyHAR)){
-                Frag1 = FragmentDevice1.newInstance(deviceNames.get(deviceNames.indexOf(LilyHAR)),deviceAddresses.get(deviceNames.indexOf(LilyHAR)));
-                Frag1.setmListener1(new FragmentDevice1.OnFragmentInteractionListener() {
-                    @Override
-                    public void onFragment1Interaction(String data) {
-                        incomingHAR();
-                    }
-                });
-                displayFragmentA();
-            }
-            if(deviceNames.contains(LilyHR)){
-                Frag2 = FragmentDevice2.newInstance(deviceNames.get(deviceNames.indexOf(LilyHR)),deviceAddresses.get(deviceNames.indexOf(LilyHR)));
-                Frag2.setmListener2(new FragmentDevice2.OnFragmentInteractionListener() {
-                    @Override
-                    public void onFragment2Interaction(String data) {
-                        incomingHeartRate();
-                    }
-                });
-                displayFragmentB();
-            }
+            Frag1 = FragmentDevice1.newInstance(LilyHAR,MacLilyHAR);
+            Frag1.setmListener1(new FragmentDevice1.OnFragmentInteractionListener() {
+                @Override
+                public void onFragment1Interaction(String data) {
+                    incomingHAR();
+                }
+            });
+            displayFragmentA();
+            Frag2 = FragmentDevice2.newInstance(LilyHR,MacLilyHR);
+            Frag2.setmListener2(new FragmentDevice2.OnFragmentInteractionListener() {
+                @Override
+                public void onFragment2Interaction(String data) {
+                    incomingHeartRate();
+                }
+            });
+            displayFragmentB();
         }
 
     }
