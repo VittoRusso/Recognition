@@ -97,7 +97,6 @@ public class FragmentDevice2 extends Fragment {
             final String action = intent.getAction();
             String value = intent.getStringExtra("WhatFragment");
             if(value.contains("HeartRate")){
-                System.out.println("HeartRate Callback Receiver");
                 if (BluetoothLeServiceHeart.ACTION_GATT_CONNECTED.equals(action)) {
                     mConnected2 = true;
                     updateConnectionState(R.string.connected, R.mipmap.onblue);
@@ -236,10 +235,16 @@ public class FragmentDevice2 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ((controlActivity) getActivity()).setUpdateFrag2(new controlActivity.updateFragment2() {
+        ((ControlActivity) getActivity()).setUpdateFrag2(new ControlActivity.updateFragment2() {
             @Override
             public void connectFrag2() {
              mBluetoothLeService2.connect(mDeviceAddress2);
+            }
+
+            @Override
+            public void disconnectFrag2() {
+                mBluetoothLeService2.disconnect();
+                updateConnectionState(R.string.disconnected, R.mipmap.offblue);
             }
         });
 

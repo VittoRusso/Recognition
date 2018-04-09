@@ -26,4 +26,13 @@
     <string name="tvName">Name:</string>
     <string name="tvName2">Lilypad Heart Rate</string>
     <string name="tvName1">Lilypad HAR</string>
+    <string name="textMin">Min: </string>
+    <string name="textMax">Max: </string>
+    <string name="menu_done">Done</string>
+    <string name="switchString">Automatic:</string>
+    <string name="menu_calibrate">Calibrate</string>
+    <string name="activity">Current Activity:</string>
+    <string name="cancel">Ok</string>
+    <string name="alertTitle">Both devices need to be connected</string>
+    <string name="preferenceKey">PrefKey</string>
 </resources>

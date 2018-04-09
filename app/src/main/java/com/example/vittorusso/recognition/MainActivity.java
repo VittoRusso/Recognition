@@ -1,8 +1,12 @@
 package com.example.vittorusso.recognition;
 
 import android.app.ActionBar;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvEmail;
     private ImageView ivPic;
     private boolean isLogged;
+    private BluetoothAdapter mBluetoothAdapter;
+    private static final int REQUEST_ENABLE_BT = 1;
 
     private int RC_SIGN_IN = 1;
 
@@ -52,6 +58,21 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
+        if (!(this.getPackageManager()).hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+        }
+
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) this.getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+        }
+
         tvEmail = findViewById(R.id.tvEmail);
         ivPic = findViewById(R.id.imageView);
         btnRecog = findViewById(R.id.btnRecognition);
@@ -59,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setSize(SignInButton.SIZE_STANDARD);
 
-        share = getPreferences(MODE_PRIVATE);
+        share = getSharedPreferences(getString(R.string.preferenceKey),MODE_PRIVATE);
         editor = share.edit();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
@@ -75,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         btnRecog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), controlActivity.class);
+                Intent i = new Intent(getApplicationContext(), ControlActivity.class);
                 startActivity(i);
             }
         });

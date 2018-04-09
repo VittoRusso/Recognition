@@ -5,4 +5,9 @@
         android:title="@string/menu_connect"
         android:orderInCategory="100"
         app:showAsAction="always|withText"/>
+
+    <item android:id="@+id/menu_calibration"
+        android:title="@string/menu_calibrate"
+        android:orderInCategory="101"
+        app:showAsAction="always|withText"/>
 </menu>

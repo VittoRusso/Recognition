@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,7 +95,6 @@ public class FragmentDevice1 extends Fragment {
             final String action = intent.getAction();
             String value = intent.getStringExtra("WhatFragment");
             if(value.contains("Accelerometer")){
-                System.out.println("Accelerometer Callback Receiver");
                 if (BluetoothLeServiceAccelerometer.ACTION_GATT_CONNECTED.equals(action)) {
                     mConnected = true;
                     updateConnectionState(R.string.connected, R.mipmap.onblue);
@@ -239,10 +236,16 @@ public class FragmentDevice1 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ((controlActivity) getActivity()).setUpdateFrag1(new controlActivity.updateFragment1() {
+        ((ControlActivity) getActivity()).setUpdateFrag1(new ControlActivity.updateFragment1() {
             @Override
             public void connectFrag1() {
                 mBluetoothLeServiceAccelerometer.connect(mDeviceAddress);
+            }
+
+            @Override
+            public void disconnectFrag1() {
+                mBluetoothLeServiceAccelerometer.disconnect();
+                updateConnectionState(R.string.disconnected, R.mipmap.offblue);
             }
         });
         return inflater.inflate(R.layout.fragment_fragment_device1, container, false);

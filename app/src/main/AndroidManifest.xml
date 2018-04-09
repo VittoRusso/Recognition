@@ -30,7 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".controlActivity"></activity>
+        <activity android:name=".ControlActivity"></activity>
+        <activity android:name=".CalibrationActivity"></activity>
 
         <service
             android:name=".BluetoothLeServiceAccelerometer"

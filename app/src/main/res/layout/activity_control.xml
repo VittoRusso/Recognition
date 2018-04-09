@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".controlActivity">
+    tools:context=".ControlActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,5 +37,60 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/layoutRec"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/btnRec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto"
+                android:text="Start Recognition" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8">
+
+            <com.gigamole.library.PulseView
+                android:id="@+id/pv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:scaleType="fitXY"
+                app:pv_alpha="70"
+                app:pv_color="#fa6f6f"
+                app:pv_icon="@mipmap/heart"
+                app:pv_icon_height="240dp"
+                app:pv_icon_width="210dp"
+                app:pv_interpolator="@android:anim/linear_interpolator"
+                app:pv_measure="height"
+                app:pv_spawn_period="1000" />
+
+            <TextView
+                android:id="@+id/tvHR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/roboto"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+        </RelativeLayout>
+
     </LinearLayout>
+
 </LinearLayout>
