@@ -35,4 +35,10 @@
     <string name="cancel">Ok</string>
     <string name="alertTitle">Both devices need to be connected</string>
     <string name="preferenceKey">PrefKey</string>
+    <string name="root">http://track-mymovement.tk/save_hartest.php</string>
+    <string name="KNN">http://track-mymovement.tk/show_labelKNN.php</string>
+    <string name="RF">http://track-mymovement.tk/show_labelRF.php</string>
+    <string name="NN">http://track-mymovement.tk/show_labelNN.php</string>
+
+
 </resources>

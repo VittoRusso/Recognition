@@ -57,7 +57,6 @@ public class ControlActivity extends AppCompatActivity {
     private String MacLilyHR = "DA:37:F6:57:FE:83";
     private String MacLilyHAR = "F8:76:6C:D1:B2:1C";
     private String email;
-    private String rootURL = "http://track-mymovement.tk/save_hartest.php";
 
     private Float minX = 0f;
     private Float maxX = 0f;
@@ -247,10 +246,12 @@ public class ControlActivity extends AppCompatActivity {
                         String url = createQuery(ValuesX,ValuesY,ValuesZ);
                         new SendHttp().execute(url);
                         Log.v("TAG","In send broadcastReceiver");
+                        new getHumanActivity().execute();
                     }
                     ValuesX.clear();
                     ValuesY.clear();
                     ValuesZ.clear();
+                    heartRateArray.clear();
                 }
 
             }
@@ -284,13 +285,15 @@ public class ControlActivity extends AppCompatActivity {
         arrayY.append("]");
         arrayZ.append("]");
 
-        query.append(rootURL);
+        query.append(getString(R.string.root));
         query.append("?value_x=");
         query.append(arrayX.toString());
         query.append("&value_y=");
         query.append(arrayY.toString());
         query.append("&value_z=");
         query.append(arrayZ.toString());
+        query.append("&hr=");
+        query.append(heartRateArray.get(heartRateArray.size()-1));
         query.append("&idPersonal=%22");
         query.append(email);
         query.append("%22");
@@ -326,6 +329,65 @@ public class ControlActivity extends AppCompatActivity {
                 Log.v("TAG",e.getMessage());
             }
             return null;
+        }
+    }
+
+    private class getHumanActivity extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... item){
+            Log.v("TAG","Im in the async task");
+            try{
+                final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                StringRequest stringRequest = new StringRequest(
+                        Request.Method.GET,
+                        getString(R.string.KNN),
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.v("TAG","Response");
+                                Log.v("TAG", response);
+                                tvRec.setText(getString(R.string.activity)+" "+ getTag(response));
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.v("TAG","Error");
+                            }
+                        }
+                );
+                requestQueue.add(stringRequest);
+            }catch (Exception e){
+                Log.v("TAG",e.getMessage());
+            }
+            return null;
+        }
+    }
+
+    private String getTag(String response) {
+        switch (response){
+            case "1":
+                return "Standing Still";
+            case "2":
+                return "Walking";
+            case "3":
+                return "Jogging";
+            case "4":
+                return "Going Up Stairs";
+            case "5":
+                return "Going Down Stairs";
+            case "6":
+                return "Jumping";
+            case "7":
+                return "Laying Down";
+            case "8":
+                return "Laying Up";
+            case "9":
+                return "Squatting";
+            case "10":
+                return "Push Ups";
+            default:
+                return "No Activity Found";
         }
     }
 
