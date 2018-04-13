@@ -100,6 +100,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        btnHist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), HistoricalActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

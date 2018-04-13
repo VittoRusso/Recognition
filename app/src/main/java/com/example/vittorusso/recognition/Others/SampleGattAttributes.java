@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.vittorusso.recognition;
+package com.example.vittorusso.recognition.Others;
 
 import java.util.HashMap;
 

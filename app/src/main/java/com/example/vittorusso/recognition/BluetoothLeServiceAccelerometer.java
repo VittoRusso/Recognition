@@ -32,6 +32,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.vittorusso.recognition.Others.SampleGattAttributes;
+
 import java.util.List;
 import java.util.UUID;
 
