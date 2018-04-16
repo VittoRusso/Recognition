@@ -47,6 +47,7 @@ public class ControlActivity extends AppCompatActivity {
     private ArrayList<String> deviceNames = new ArrayList<>();
     private ArrayList<String> deviceAddresses = new ArrayList<>();
     private ArrayList<String> heartRateArray = new ArrayList<>();
+    private Integer curHR;
 
     private ArrayList<Float> ValuesX = new ArrayList<>();
     private ArrayList<Float> ValuesY = new ArrayList<>();
@@ -213,8 +214,7 @@ public class ControlActivity extends AppCompatActivity {
             pv.startPulse();
             tvHR.setVisibility(View.VISIBLE);
             tvHR.setText(array1[0]);
-            heartRateArray.add(array1[0]);
-            Log.v("TAG", heartRateArray.size()+"");
+            curHR = Integer.parseInt(array1[0]);
         }else{
             pv.finishPulse();
             tvHR.setVisibility(View.INVISIBLE);
@@ -251,7 +251,6 @@ public class ControlActivity extends AppCompatActivity {
                     ValuesX.clear();
                     ValuesY.clear();
                     ValuesZ.clear();
-                    heartRateArray.clear();
                 }
 
             }
@@ -293,7 +292,7 @@ public class ControlActivity extends AppCompatActivity {
         query.append("&value_z=");
         query.append(arrayZ.toString());
         query.append("&hr=");
-        query.append(heartRateArray.get(heartRateArray.size()-1));
+        query.append(curHR);
         query.append("&idPersonal=%22");
         query.append(email);
         query.append("%22");
@@ -305,7 +304,6 @@ public class ControlActivity extends AppCompatActivity {
     private class SendHttp extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... item){
-            Log.v("TAG","Im in the async task");
             try{
                 final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 StringRequest stringRequest = new StringRequest(
@@ -314,7 +312,6 @@ public class ControlActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.v("TAG","Response");
                             }
                         },
                         new Response.ErrorListener() {
@@ -335,7 +332,6 @@ public class ControlActivity extends AppCompatActivity {
     private class getHumanActivity extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... item){
-            Log.v("TAG","Im in the async task");
             try{
                 final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 StringRequest stringRequest = new StringRequest(
@@ -344,9 +340,9 @@ public class ControlActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.v("TAG","Response");
                                 Log.v("TAG", response);
-                                tvRec.setText(getString(R.string.activity)+" "+ getTag(response));
+                                response = response.replaceAll("[^\\d.]", "");
+                                tvRec.setText(getString(R.string.activity)+" "+ getTag(Integer.parseInt(response)));
                             }
                         },
                         new Response.ErrorListener() {
@@ -364,27 +360,27 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
 
-    private String getTag(String response) {
+    private String getTag(Integer response) {
         switch (response){
-            case "1":
+            case 1:
                 return "Standing Still";
-            case "2":
+            case 2:
                 return "Walking";
-            case "3":
+            case 3:
                 return "Jogging";
-            case "4":
+            case 4:
                 return "Going Up Stairs";
-            case "5":
+            case 5:
                 return "Going Down Stairs";
-            case "6":
+            case 6:
                 return "Jumping";
-            case "7":
+            case 7:
                 return "Laying Down";
-            case "8":
+            case 8:
                 return "Laying Up";
-            case "9":
+            case 9:
                 return "Squatting";
-            case "10":
+            case 10:
                 return "Push Ups";
             default:
                 return "No Activity Found";
