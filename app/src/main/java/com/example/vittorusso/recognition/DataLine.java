@@ -1,5 +1,7 @@
 package com.example.vittorusso.recognition;
 
+import java.util.Date;
+
 public class DataLine {
 
     private String id;
@@ -11,7 +13,7 @@ public class DataLine {
     private String labelKNN;
     private String labelNN;
     private String email;
-    private String date;
+    private Date date;
 
     public String getId() {
         return id;
@@ -85,11 +87,11 @@ public class DataLine {
         this.email = email;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 }
