@@ -1,10 +1,13 @@
 package com.example.vittorusso.recognition;
 
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -12,15 +15,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,9 +36,11 @@ public class HistoricalActivity extends AppCompatActivity {
     private SharedPreferences share;
     private String email;
     private List<DataLine> allData;
+    private ArrayList<ArrayList<DataLine>> DataGroup = new ArrayList<ArrayList<DataLine>>();
     private Integer numSession=0;
 
     private RecyclerView rv;
+    private HistoricalAdapter mAdapter;
     private SwipeRefreshLayout swp;
 
     @Override
@@ -46,14 +48,24 @@ public class HistoricalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historical);
 
+        getSupportActionBar().setTitle(R.string.title_devices);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
         rv = findViewById(R.id.rv);
         swp = findViewById(R.id.swp);
+        mAdapter = new HistoricalAdapter(DataGroup);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(mLayoutManager);
+        rv.setItemAnimator(new DefaultItemAnimator());
+        rv.setAdapter(mAdapter);
         swp.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshlist();
             }
         });
+
 
         share = getSharedPreferences(getString(R.string.preferenceKey),MODE_PRIVATE);
         email = share.getString(getString(R.string.emailKey),"");
@@ -82,7 +94,8 @@ public class HistoricalActivity extends AppCompatActivity {
                                 try{
                                     JSONArray jsonArray = new JSONArray(response);
                                     parseJson(jsonArray);
-                                    HashMap<Integer,Integer> Session = getSessions(allData);
+                                    DataGroup = getSessions(allData);
+                                    populateRecycleView(DataGroup);
                                     if(swp.isRefreshing()){
                                         swp.setRefreshing(false);
                                     }
@@ -106,23 +119,23 @@ public class HistoricalActivity extends AppCompatActivity {
         }
     }
 
-    private HashMap<Integer,Integer> getSessions(List<DataLine> allData) {
-        HashMap<Integer,Integer> sessions = new HashMap<>();
+    private void populateRecycleView(ArrayList<ArrayList<DataLine>> dataGroup) {
+
+    }
+
+    private ArrayList<ArrayList<DataLine>> getSessions(List<DataLine> allData) {
+        ArrayList<ArrayList<DataLine>> sessions = new ArrayList<ArrayList<DataLine>>();
         Date prev = (allData.get(0)).getDate();
-        sessions.put(0,Integer.parseInt((allData.get(0)).getId()));
-        numSession++;
         for (int i = 1; i < allData.size(); i++) {
             DataLine cur = allData.get(i);
             Date now = cur.getDate();
             if (now.getTime() - prev.getTime() >= 15*60*1000){
                 numSession++;
                 Log.v("TAG","ID: "+cur.getId());
-                sessions.put(i,Integer.parseInt((allData.get(i-1)).getId()));
-                sessions.put(i,Integer.parseInt(cur.getId()));
+
             }
             prev = now;
         }
-        sessions.put(allData.size()-1,Integer.parseInt((allData.get(allData.size()-1)).getId()));
         return sessions;
     }
 
