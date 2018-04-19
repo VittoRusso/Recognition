@@ -1,6 +1,7 @@
 package com.example.vittorusso.recognition;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,6 +11,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,21 +31,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class HistoricalActivity extends AppCompatActivity {
+public class HistoricalActivity extends AppCompatActivity implements HistoricalAdapter.RecycleClickListener{
 
     private SharedPreferences share;
     private String email;
     private List<DataLine> allData;
     private ArrayList<ArrayList<DataLine>> DataGroup = new ArrayList<ArrayList<DataLine>>();
     private Integer numSession=0;
+    private boolean mRefresh=false;
 
     private RecyclerView rv;
     private HistoricalAdapter mAdapter;
     private SwipeRefreshLayout swp;
+    private MenuItem refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +59,20 @@ public class HistoricalActivity extends AppCompatActivity {
 
         rv = findViewById(R.id.rv);
         swp = findViewById(R.id.swp);
+
         mAdapter = new HistoricalAdapter(DataGroup);
+        mAdapter.setRecycleClickListener(this);
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rv.setLayoutManager(mLayoutManager);
         rv.setItemAnimator(new DefaultItemAnimator());
+        rv.addItemDecoration(new SimpleDividerItemDecoration(this));
         rv.setAdapter(mAdapter);
+
         swp.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshlist();
+                new loadUserData().execute(email);
             }
         });
 
@@ -74,15 +84,21 @@ public class HistoricalActivity extends AppCompatActivity {
 
     }
 
-    private void refreshlist() {
-        new loadUserData().execute(email);
+    @Override
+    public void itemClick(View view, int position) {
+        ArrayList<DataLine> intExtra = DataGroup.get(position);
+        TransferData transfer = TransferData.getInstance();
+        transfer.setGroupData(intExtra);
+        Intent i = new Intent(this, itemHistory.class);
+        startActivity(i);
     }
 
     private class loadUserData extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... item){
-            Log.v("TAG","Im in the async task");
             try{
+                mRefresh = true;
+                invalidateOptionsMenu();
                 final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                  StringRequest stringRequest = new StringRequest(
                         Request.Method.GET,
@@ -90,7 +106,6 @@ public class HistoricalActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.v("TAG","Response");
                                 try{
                                     JSONArray jsonArray = new JSONArray(response);
                                     parseJson(jsonArray);
@@ -99,6 +114,8 @@ public class HistoricalActivity extends AppCompatActivity {
                                     if(swp.isRefreshing()){
                                         swp.setRefreshing(false);
                                     }
+                                    mRefresh = false;
+                                    invalidateOptionsMenu();
                                 }catch (JSONException e){
                                     Log.v("TAG",e.toString());
                                 }
@@ -119,22 +136,36 @@ public class HistoricalActivity extends AppCompatActivity {
         }
     }
 
-    private void populateRecycleView(ArrayList<ArrayList<DataLine>> dataGroup) {
 
+    private void populateRecycleView(ArrayList<ArrayList<DataLine>> dataGroup) {
+        mAdapter.setDataGroups(dataGroup);
+        mAdapter.notifyDataSetChanged();
     }
 
     private ArrayList<ArrayList<DataLine>> getSessions(List<DataLine> allData) {
         ArrayList<ArrayList<DataLine>> sessions = new ArrayList<ArrayList<DataLine>>();
         Date prev = (allData.get(0)).getDate();
+        ArrayList<Integer> Positions = new ArrayList<>();
+        Positions.add(0);
         for (int i = 1; i < allData.size(); i++) {
             DataLine cur = allData.get(i);
             Date now = cur.getDate();
             if (now.getTime() - prev.getTime() >= 15*60*1000){
                 numSession++;
-                Log.v("TAG","ID: "+cur.getId());
-
+                Positions.add(i-1);
+                Positions.add(i);
             }
             prev = now;
+        }
+        Positions.add(allData.size()-1);
+
+        for (int i = 0; i < Positions.size()-1; i=i+2) {
+            if(i>=Positions.size()-1){
+
+            }else{
+                ArrayList<DataLine> subList = new ArrayList<DataLine>(allData.subList(Positions.get(i),Positions.get(i+1)));
+                sessions.add(subList);
+            }
         }
         return sessions;
     }
@@ -201,7 +232,6 @@ public class HistoricalActivity extends AppCompatActivity {
 
                             break;
                     }
-                    //Log.v("TAG",temp1);
                 }
 
                 allData.add(dataLine);
@@ -209,7 +239,18 @@ public class HistoricalActivity extends AppCompatActivity {
                 Log.v("TAG",e.toString());
             }
         }
-        Log.v("TAG",allData.size()+"");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_refresh, menu);
+        refresh = menu.findItem(R.id.menu_refresh);
+        if(mRefresh){
+            refresh.setActionView(R.layout.actionbar_indeterminate_progress);
+        }else{
+            refresh.setActionView(null);
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     private String getTag(String response) {

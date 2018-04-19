@@ -1,8 +1,9 @@
 package com.example.vittorusso.recognition;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class DataLine {
+public class DataLine implements Serializable{
 
     private String id;
     private String valueX;

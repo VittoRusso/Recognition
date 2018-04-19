@@ -44,7 +44,8 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".HistoricalActivity"></activity>
+        <activity android:name=".HistoricalActivity" />
+        <activity android:name=".itemHistory"></activity>
     </application>
 
 </manifest>
