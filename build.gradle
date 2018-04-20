@@ -21,7 +21,7 @@ allprojects {
         google()
         jcenter()
         maven {
-            url  'http://dl.bintray.com/gigamole/maven/'
+            url "https://jitpack.io"
         }
     }
 }

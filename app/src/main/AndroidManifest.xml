@@ -45,7 +45,10 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".HistoricalActivity" />
-        <activity android:name=".itemHistory"></activity>
+        <activity
+            android:name=".itemHistory"
+            android:screenOrientation="landscape">
+        </activity>
     </application>
 
 </manifest>

@@ -253,31 +253,4 @@ public class HistoricalActivity extends AppCompatActivity implements HistoricalA
         return super.onCreateOptionsMenu(menu);
     }
 
-    private String getTag(String response) {
-        switch (response){
-            case "1":
-                return "Standing Still";
-            case "2":
-                return "Walking";
-            case "3":
-                return "Jogging";
-            case "4":
-                return "Going Up Stairs";
-            case "5":
-                return "Going Down Stairs";
-            case "6":
-                return "Jumping";
-            case "7":
-                return "Laying Down";
-            case "8":
-                return "Laying Up";
-            case "9":
-                return "Squatting";
-            case "10":
-                return "Push Ups";
-            default:
-                return "No Activity Found";
-        }
-    }
-
 }
