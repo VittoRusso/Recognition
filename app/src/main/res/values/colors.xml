@@ -6,4 +6,18 @@
     <color name="colorAccent2">#0f08d9</color>
     <color name="red">#ff0d00</color>
     <color name="blue">#0008ff</color>
+
+    <!-- LIST OF COLORS FOR LABELS -->
+    <color name="c1">#e6194b</color><!-- StandingStill -->
+    <color name="c2">#3cb44b</color><!-- Walking -->
+    <color name="c3">#ffe119</color><!-- Jogging -->
+    <color name="c4">#0082c8</color><!-- GoingUpStairs -->
+    <color name="c5">#f58231</color><!-- GoingDownStairs -->
+    <color name="c6">#911eb4</color><!-- Jumping -->
+    <color name="c7">#46f0f0</color><!-- LayingDown -->
+    <color name="c8">#f032e6</color><!-- LayingUpside -->
+    <color name="c9">#d2f53c</color><!-- Squatting -->
+    <color name="c10">#008080</color><!-- PushUps -->
+    <color name="c0">#fabebe</color><!-- Null -->
+
 </resources>

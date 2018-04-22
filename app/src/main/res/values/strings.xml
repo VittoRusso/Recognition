@@ -42,6 +42,7 @@
     <string name="item"> </string>
     <string name="dataKey">dataKey</string>
     <string name="bundleKey">BundleKey</string>
+    <string name="graph_title">Heart Rate vs Time</string>
 
 
 </resources>
