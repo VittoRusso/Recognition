@@ -39,6 +39,7 @@
     <string name="KNN">http://track-mymovement.tk/show_labelKNN.php</string>
     <string name="RF">http://track-mymovement.tk/show_labelRF.php</string>
     <string name="NN">http://track-mymovement.tk/show_labelNN.php</string>
+    <string name="runScript">http://track-mymovement.tk/runPython.php</string>
     <string name="item"> </string>
     <string name="dataKey">dataKey</string>
     <string name="bundleKey">BundleKey</string>

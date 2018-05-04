@@ -243,10 +243,10 @@ public class ControlActivity extends AppCompatActivity {
 
                 if(ValuesX.size() == 20){
                     if(status){
-                        String url = createQuery(ValuesX,ValuesY,ValuesZ);
-                        new SendHttp().execute(url);
-                        Log.v("TAG","In send broadcastReceiver");
+                        new SendHttp().execute(createQuery(ValuesX,ValuesY,ValuesZ));
                         new getHumanActivity().execute();
+                        new runScript().execute();
+
                     }
                     ValuesX.clear();
                     ValuesY.clear();
@@ -343,6 +343,34 @@ public class ControlActivity extends AppCompatActivity {
                                 Log.v("TAG", response);
                                 response = response.replaceAll("[^\\d.]", "");
                                 tvRec.setText(getString(R.string.activity)+" "+ getTag(Integer.parseInt(response)));
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.v("TAG","Error");
+                            }
+                        }
+                );
+                requestQueue.add(stringRequest);
+            }catch (Exception e){
+                Log.v("TAG",e.getMessage());
+            }
+            return null;
+        }
+    }
+
+    private class runScript extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... item){
+            try{
+                final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                StringRequest stringRequest = new StringRequest(
+                        Request.Method.GET,
+                        getString(R.string.runScript),
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
                             }
                         },
                         new Response.ErrorListener() {
