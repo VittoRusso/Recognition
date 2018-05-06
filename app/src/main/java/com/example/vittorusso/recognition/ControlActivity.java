@@ -41,6 +41,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ControlActivity extends AppCompatActivity {
 
@@ -142,6 +144,8 @@ public class ControlActivity extends AppCompatActivity {
                     tvRec.setGravity(Gravity.CENTER);
                     tvRec.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
                     ly.addView(tvRec);
+                    Timer timer = new Timer();
+                    timer.schedule(new runScriptTimer(), 2000, 2000);
                 }else{
                     dialogStart.show();
                 }
@@ -245,8 +249,6 @@ public class ControlActivity extends AppCompatActivity {
                     if(status){
                         new SendHttp().execute(createQuery(ValuesX,ValuesY,ValuesZ));
                         new getHumanActivity().execute();
-                        new runScript().execute();
-
                     }
                     ValuesX.clear();
                     ValuesY.clear();
@@ -385,6 +387,12 @@ public class ControlActivity extends AppCompatActivity {
                 Log.v("TAG",e.getMessage());
             }
             return null;
+        }
+    }
+
+    class runScriptTimer extends TimerTask {
+        public void run() {
+            new runScript().execute();
         }
     }
 
