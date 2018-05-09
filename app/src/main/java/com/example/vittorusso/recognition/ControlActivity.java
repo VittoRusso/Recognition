@@ -49,7 +49,7 @@ public class ControlActivity extends AppCompatActivity {
     private ArrayList<String> deviceNames = new ArrayList<>();
     private ArrayList<String> deviceAddresses = new ArrayList<>();
     private ArrayList<String> heartRateArray = new ArrayList<>();
-    private Integer curHR;
+    private Integer curHR = 1;
 
     private ArrayList<Float> ValuesX = new ArrayList<>();
     private ArrayList<Float> ValuesY = new ArrayList<>();
@@ -95,6 +95,8 @@ public class ControlActivity extends AppCompatActivity {
     private AlertDialog dialogStart;
 
     private BufferedOutputStream out;
+
+    private boolean pvState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,12 +217,18 @@ public class ControlActivity extends AppCompatActivity {
         isHR = true;
         String array1[]= data.split("#");
         if(array1[1].contains("1")){
-            pv.startPulse();
+            if (!pvState){
+                pv.startPulse();
+                pvState = !pvState;
+            }
             tvHR.setVisibility(View.VISIBLE);
             tvHR.setText(array1[0]);
             curHR = Integer.parseInt(array1[0]);
         }else{
-            pv.finishPulse();
+            if (pvState){
+                pv.finishPulse();
+                pvState = !pvState;
+            }
             tvHR.setVisibility(View.INVISIBLE);
         }
     }
@@ -338,13 +346,15 @@ public class ControlActivity extends AppCompatActivity {
                 final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 StringRequest stringRequest = new StringRequest(
                         Request.Method.GET,
-                        getString(R.string.KNN),
+                        getString(R.string.RF),
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 Log.v("TAG", response);
-                                response = response.replaceAll("[^\\d.]", "");
-                                tvRec.setText(getString(R.string.activity)+" "+ getTag(Integer.parseInt(response)));
+                                if(!response.isEmpty()){
+                                    response = response.replaceAll("[^\\d.]", "");
+                                    tvRec.setText(getString(R.string.activity)+" "+ getTag(Integer.parseInt(response)));
+                                }
                             }
                         },
                         new Response.ErrorListener() {
