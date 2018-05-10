@@ -256,7 +256,6 @@ public class ControlActivity extends AppCompatActivity {
                 if(ValuesX.size() == 20){
                     if(status){
                         new SendHttp().execute(createQuery(ValuesX,ValuesY,ValuesZ));
-                        new getHumanActivity().execute();
                     }
                     ValuesX.clear();
                     ValuesY.clear();
@@ -350,8 +349,7 @@ public class ControlActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.v("TAG", response);
-                                if(!response.isEmpty()){
+                                if(!response.isEmpty() || response.equals("")){
                                     response = response.replaceAll("[^\\d.]", "");
                                     tvRec.setText(getString(R.string.activity)+" "+ getTag(Integer.parseInt(response)));
                                 }
@@ -403,6 +401,7 @@ public class ControlActivity extends AppCompatActivity {
     class runScriptTimer extends TimerTask {
         public void run() {
             new runScript().execute();
+            new getHumanActivity().execute();
         }
     }
 
