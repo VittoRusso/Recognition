@@ -58,20 +58,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        if (!(this.getPackageManager()).hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-        }
-
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) this.getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
-
-        if (!mBluetoothAdapter.isEnabled()) {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
 
         tvEmail = findViewById(R.id.tvEmail);
         ivPic = findViewById(R.id.imageView);
@@ -96,8 +82,20 @@ public class MainActivity extends AppCompatActivity {
         btnRecog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), ControlActivity.class);
-                startActivity(i);
+                if (!(getApplicationContext().getPackageManager()).hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+                    Toast.makeText(getApplicationContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+                }
+
+                final BluetoothManager bluetoothManager =
+                        (BluetoothManager) getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+                mBluetoothAdapter = bluetoothManager.getAdapter();
+
+                if (!mBluetoothAdapter.isEnabled()) {
+                    if (!mBluetoothAdapter.isEnabled()) {
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    }
+                }
             }
         });
 
@@ -175,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
+        }
+
+        if(requestCode == REQUEST_ENABLE_BT){
+            Intent i = new Intent(getApplicationContext(), ControlActivity.class);
+            startActivity(i);
         }
     }
 

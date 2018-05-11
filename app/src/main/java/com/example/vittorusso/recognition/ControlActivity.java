@@ -255,9 +255,7 @@ public class ControlActivity extends AppCompatActivity {
 
                 if(ValuesX.size() == 20){
                     if(status){
-                        AsyncObj asyncObj = new AsyncObj(ValuesX,ValuesY,ValuesZ);
-                        Log.v("TAG",""+asyncObj.valuesX.size());
-                        new SendHttp(asyncObj).execute();
+                        new SendHttp().execute(createQuery(ValuesX,ValuesY,ValuesZ));
                     }
                     ValuesX.clear();
                     ValuesY.clear();
@@ -311,25 +309,14 @@ public class ControlActivity extends AppCompatActivity {
         return query.toString();
     }
 
-    class SendHttp extends AsyncTask <Void,Void,Void> {
-        private AsyncObj asyncObj1;
-
-        SendHttp(AsyncObj asyncObj){
-            this.asyncObj1 = asyncObj;
-            Log.v("TAG","In constructor: "+asyncObj1.valuesX.size());
-        }
-        protected void onPreExecute() {
-        }
-
-
-        public Void doInBackground(Void...voids){
-            Log.v("TAG",""+asyncObj1.valuesX.size());
-            String url = createQuery(asyncObj1.valuesX,asyncObj1.valuesY,asyncObj1.valuesZ);
+     class SendHttp extends AsyncTask <String,Void,Void> {
+        @Override
+        public Void doInBackground(String...params){
             try{
                 final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 StringRequest stringRequest = new StringRequest(
                         Request.Method.GET,
-                        url,
+                        params[0],
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -343,8 +330,7 @@ public class ControlActivity extends AppCompatActivity {
                         }
                 );
                 requestQueue.add(stringRequest);
-                Log.v("TAG",url);
-                Log.v("TAG","In SendHTTP");
+                Log.v("TAG",params[0]);
             }catch (Exception e){
                 Log.v("TAG",e.getMessage());
             }
