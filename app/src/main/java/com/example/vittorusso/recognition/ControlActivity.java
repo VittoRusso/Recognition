@@ -255,7 +255,9 @@ public class ControlActivity extends AppCompatActivity {
 
                 if(ValuesX.size() == 20){
                     if(status){
-                        new SendHttp().execute(createQuery(ValuesX,ValuesY,ValuesZ));
+                        AsyncObj asyncObj = new AsyncObj(ValuesX,ValuesY,ValuesZ);
+                        Log.v("TAG",""+asyncObj.valuesX.size());
+                        new SendHttp(asyncObj).execute();
                     }
                     ValuesX.clear();
                     ValuesY.clear();
@@ -306,18 +308,28 @@ public class ControlActivity extends AppCompatActivity {
         query.append(email);
         query.append("%22");
 
-        Log.v("TAG", query.toString());
         return query.toString();
     }
 
-    private class SendHttp extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... item){
+    class SendHttp extends AsyncTask <Void,Void,Void> {
+        private AsyncObj asyncObj1;
+
+        SendHttp(AsyncObj asyncObj){
+            this.asyncObj1 = asyncObj;
+            Log.v("TAG","In constructor: "+asyncObj1.valuesX.size());
+        }
+        protected void onPreExecute() {
+        }
+
+
+        public Void doInBackground(Void...voids){
+            Log.v("TAG",""+asyncObj1.valuesX.size());
+            String url = createQuery(asyncObj1.valuesX,asyncObj1.valuesY,asyncObj1.valuesZ);
             try{
                 final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 StringRequest stringRequest = new StringRequest(
                         Request.Method.GET,
-                        item[0],
+                        url,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -331,6 +343,8 @@ public class ControlActivity extends AppCompatActivity {
                         }
                 );
                 requestQueue.add(stringRequest);
+                Log.v("TAG",url);
+                Log.v("TAG","In SendHTTP");
             }catch (Exception e){
                 Log.v("TAG",e.getMessage());
             }
@@ -338,14 +352,14 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
 
-    private class getHumanActivity extends AsyncTask<Void, Void, Void> {
+    private class runScript extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... item){
             try{
                 final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 StringRequest stringRequest = new StringRequest(
                         Request.Method.GET,
-                        getString(R.string.RF),
+                        getString(R.string.runScript),
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -370,38 +384,9 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
 
-    private class runScript extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... item){
-            try{
-                final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                StringRequest stringRequest = new StringRequest(
-                        Request.Method.GET,
-                        getString(R.string.runScript),
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.v("TAG","Error");
-                            }
-                        }
-                );
-                requestQueue.add(stringRequest);
-            }catch (Exception e){
-                Log.v("TAG",e.getMessage());
-            }
-            return null;
-        }
-    }
-
     class runScriptTimer extends TimerTask {
         public void run() {
             new runScript().execute();
-            new getHumanActivity().execute();
         }
     }
 
