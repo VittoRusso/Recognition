@@ -116,7 +116,7 @@ public class itemHistory extends AppCompatActivity {
                 valuesHR.add(Integer.parseInt(HR));
             }
 
-            String label = curData.get(j).getLabelKNN();
+            String label = curData.get(j).getLabelRF();
             if(label.contains(" ")){
                 label.replaceAll("\\s","");
             }

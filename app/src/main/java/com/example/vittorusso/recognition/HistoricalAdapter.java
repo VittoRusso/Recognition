@@ -78,7 +78,7 @@ public class HistoricalAdapter extends RecyclerView.Adapter<HistoricalAdapter.My
     private String getCommonActivity(ArrayList<DataLine> curLine) {
         ArrayList<Integer> activity = new ArrayList<>();
         for (int i = 0; i < curLine.size(); i++) {
-            String check = (curLine.get(i).getLabelKNN()).replaceAll("\\s","");
+            String check = (curLine.get(i).getLabelRF()).replaceAll("\\s","");
             if(check.equals("null")){
                 activity.add(0);
             }else{
