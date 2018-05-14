@@ -40,6 +40,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -350,8 +352,9 @@ public class ControlActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(String response) {
                                 if(!response.isEmpty() || response.equals("")){
-                                    response = response.replaceAll("[^\\d.]", "");
-                                    tvRec.setText(getString(R.string.activity)+" "+ getTag(Integer.parseInt(response)));
+                                    String[] labels = response.split(",");
+                                    String show = getString(R.string.activity)+"\n RF: "+getTag(Integer.parseInt(labels[0]))+"\n"+" KNN: "+getTag(Integer.parseInt(labels[1]))+"\n"+" NN: "+getTag(Integer.parseInt(labels[2]));
+                                    tvRec.setText(show);
                                 }
                             }
                         },
