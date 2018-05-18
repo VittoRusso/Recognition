@@ -217,21 +217,23 @@ public class ControlActivity extends AppCompatActivity {
 
     private void incomingHeartRate(String data) {
         isHR = true;
-        String array1[]= data.split("#");
-        if(array1[1].contains("1")){
-            if (!pvState){
-                pv.startPulse();
-                pvState = !pvState;
+        if(!data.isEmpty()){
+            String array1[]= data.split("#");
+            if(array1[1].contains("1")){
+                if (!pvState){
+                    pv.startPulse();
+                    pvState = !pvState;
+                }
+                tvHR.setVisibility(View.VISIBLE);
+                tvHR.setText(array1[0]);
+                curHR = Integer.parseInt(array1[0]);
+            }else{
+                if (pvState){
+                    pv.finishPulse();
+                    pvState = !pvState;
+                }
+                tvHR.setVisibility(View.INVISIBLE);
             }
-            tvHR.setVisibility(View.VISIBLE);
-            tvHR.setText(array1[0]);
-            curHR = Integer.parseInt(array1[0]);
-        }else{
-            if (pvState){
-                pv.finishPulse();
-                pvState = !pvState;
-            }
-            tvHR.setVisibility(View.INVISIBLE);
         }
     }
 
