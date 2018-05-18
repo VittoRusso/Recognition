@@ -304,6 +304,7 @@ public class ControlActivity extends AppCompatActivity {
         query.append(arrayZ.toString());
         query.append("&hr=");
         query.append(curHR);
+        curHR++;
         query.append("&idPersonal=%22");
         query.append(email);
         query.append("%22");
