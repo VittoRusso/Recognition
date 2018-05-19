@@ -355,7 +355,7 @@ public class ControlActivity extends AppCompatActivity {
                             public void onResponse(String response) {
                                 if(!response.isEmpty() || response.equals("")){
                                     String[] labels = response.split(",");
-                                    String show = getString(R.string.activity)+"\n RF: "+getTag(Integer.parseInt(labels[0]))+"\n"+" KNN: "+getTag(Integer.parseInt(labels[1]))+"\n"+" NN: "+getTag(Integer.parseInt(labels[2]));
+                                    String show = getString(R.string.activity)+getTag(Integer.parseInt(labels[0]));
                                     tvRec.setText(show);
                                 }
                             }
