@@ -61,8 +61,12 @@ public class BluetoothLeServiceAccelerometer extends Service {
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
 
+    /*Declaracion del UUID usado en el simblee, este se encuentra en SampleGattAttribute.java*/
     public final static UUID UUID_HEART_RATE_MEASUREMENT =
             UUID.fromString(SampleGattAttributes.Simblee);
+
+    /*En ambos servicios se encuentran constructores, inicializadores etc para la comunicacion del BLE
+    * estos metodos vienen por defecto en el codigo de ejemplo de Google*/
 
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
@@ -109,6 +113,8 @@ public class BluetoothLeServiceAccelerometer extends Service {
         }
     };
 
+    /*Este metodo en especifico se introduce un TAG para lograr saber de que microcontrolador porviene la informacion.
+    * Esto luego se utiliza en el BroadCastReceiver*/
     private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         intent.putExtra("WhatFragment","Accelerometer");

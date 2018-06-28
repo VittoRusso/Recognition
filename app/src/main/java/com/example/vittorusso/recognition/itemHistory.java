@@ -38,7 +38,7 @@ public class itemHistory extends AppCompatActivity {
     private boolean[] legendStatus;
     private String[] labelsArray;
 
-
+    /*En esta actividad se grafica los datos que se pasaron de la clase "HistoricalActivity"*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +48,7 @@ public class itemHistory extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
+        /*Se tiene un array de colores para las 10 actividades mas uno de defecto*/
         colorsArray= new int[]{getResources().getColor(R.color.c0),
                 getResources().getColor(R.color.c1),
                 getResources().getColor(R.color.c2),
@@ -97,12 +98,16 @@ public class itemHistory extends AppCompatActivity {
 
     }
 
+    /*Para llenar la grafica los puntos tienen que ser ingresado como objetos "Entry" para eso se busca en los arrays que
+    * se pasaron*/
     private void populateGraph(ArrayList<DataLine> curData) {
         ArrayList<Integer> valuesHR = new ArrayList<>();
         final ArrayList<Date> valuesDate = new ArrayList<>();
         final ArrayList<String> valuesLabelString = new ArrayList<>();
         ArrayList<Integer> valuesLabelInt = new ArrayList<>();
 
+        /*Dado que los valores estan guardado como String primero se quitan caracteres indeseados y espacios para luego
+        * ser transformado a enteros y objeto tipo date*/
         for (int j = 0; j < curData.size(); j++) {
             valuesDate.add(curData.get(j).getDate());
 
@@ -129,11 +134,13 @@ public class itemHistory extends AppCompatActivity {
             }
         }
 
+        /*Luego se crean las listas de puntos x,y de objeto Entry*/
         List<LegendEntry> entries = new ArrayList<>();
         List<Entry> entriesHR = new ArrayList<>();
         List<Integer> colors = new ArrayList<Integer>();
         for (int i = 0; i < valuesDate.size(); i++) {
             entriesHR.add(new Entry(i,valuesHR.get(i)));
+            /*Aqui se agrega el color especifico dependiendo de la actividad en el Switch*/
             switch (valuesLabelInt.get(i)){
                 case 1:
                     colors.add(getResources().getColor(R.color.c1));
@@ -255,7 +262,7 @@ public class itemHistory extends AppCompatActivity {
         dataSetHR.setColors(colorInt);
         dataSetHR.setCircleColors(colorInt);
 
-
+        /*Aqui se ajustan los ejes, colores, legenda y se agrega una animacion*/
         chart.getXAxis().setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {

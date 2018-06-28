@@ -6,6 +6,7 @@
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
+    /*Permisos para internet, gps etc*/
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -32,6 +33,9 @@
         </activity>
         <activity android:name=".ControlActivity" />
         <activity android:name=".CalibrationActivity" />
+
+        /*Declaracion de los 2 servicios que se van a usar, teoricamente se puede realiza hasta 9 conexiones con un solo
+        servicio*/
 
         <service
             android:name=".BluetoothLeServiceAccelerometer"

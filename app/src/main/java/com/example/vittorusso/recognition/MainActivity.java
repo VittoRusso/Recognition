@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         share = getSharedPreferences(getString(R.string.preferenceKey),MODE_PRIVATE);
         editor = share.edit();
 
+        /*Para ingresar a una cuenta de Google se usa su api, para esto se requiere registrar la aplicacion en la pagina etc
+        * Primero se busca si ya existe una cuenta ingresada y logeada*/
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*Se activa el bluetooth si se desea ir a la actividad de reconocimiento*/
         btnRecog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        /*Se busca la cuenta*/
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         update(account);
     }
@@ -135,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*Este metodo busca la imagen de perfil y la agrega a la interfaz de usuario*/
     private void placeImage(Uri url) {
         if(url != null){
             Picasso.get().load(url.toString()).into(ivPic, new Callback() {
@@ -157,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    /*Este metodo busca la cuenta mediante un intento especial de Google*/
     private void signIn() {
         if(!isLogged) {
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -172,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        /*Aqui se regresa el intento y se actualizan las banderas*/
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);

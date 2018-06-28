@@ -60,6 +60,11 @@ public class FragmentDevice1 extends Fragment {
 
     private static final int REQUEST_ENABLE_BT = 1;
 
+    /*Ambos fragmentos son identicos a los metodos que se utilizan y se explican en la aplicacion de entrenamiento, aqui se
+    * encuentra los metodos genericos y por defecto para la comunicacion BLE. En el metodo donde proviene la trama de datos
+    * existe un if donde se analiza de que microcontrolador proviene, este se coloca en el servicio individual de cada uno.
+    * Luego se llama al metodo del listener que a su vez llama al metodo que esta en la actividad "ControlActivity.java"*/
+
     public FragmentDevice1() {
     }
 

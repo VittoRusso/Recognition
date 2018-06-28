@@ -48,6 +48,8 @@ public class HistoricalActivity extends AppCompatActivity implements HistoricalA
     private SwipeRefreshLayout swp;
     private MenuItem refresh;
 
+
+    /*Aqui se crea un recyclerView (Lista que tiene optimo uso de RAM) con cada session previamente realizada y guardada en la DB*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,7 @@ public class HistoricalActivity extends AppCompatActivity implements HistoricalA
         rv.addItemDecoration(new SimpleDividerItemDecoration(this));
         rv.setAdapter(mAdapter);
 
+        /*Cuando se refresca la lista (arrastrando hacia abajo) se vuelva a llamar el metodo de carga de datos*/
         swp.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -84,6 +87,7 @@ public class HistoricalActivity extends AppCompatActivity implements HistoricalA
 
     }
 
+    /*Cuando se unde una session se envia por el intento a la otra actividad el grupo de datos de la cual se escogio*/
     @Override
     public void itemClick(View view, int position) {
         ArrayList<DataLine> intExtra = DataGroup.get(position);
@@ -93,6 +97,7 @@ public class HistoricalActivity extends AppCompatActivity implements HistoricalA
         startActivity(i);
     }
 
+    /*Este metodo llama a la DB toda la informacion del usuario con el email = email*/
     private class loadUserData extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... item){
@@ -136,12 +141,13 @@ public class HistoricalActivity extends AppCompatActivity implements HistoricalA
         }
     }
 
-
+    /*Metodo que refresca la lista*/
     private void populateRecycleView(ArrayList<ArrayList<DataLine>> dataGroup) {
         mAdapter.setDataGroups(dataGroup);
         mAdapter.notifyDataSetChanged();
     }
 
+    /*Aqui se divide la lista de datos en sessiones, cada session se identifica por un tiempo de 15 minutos entre datos*/
     private ArrayList<ArrayList<DataLine>> getSessions(List<DataLine> allData) {
         ArrayList<ArrayList<DataLine>> sessions = new ArrayList<ArrayList<DataLine>>();
         Date prev = (allData.get(0)).getDate();
@@ -170,7 +176,8 @@ public class HistoricalActivity extends AppCompatActivity implements HistoricalA
         return sessions;
     }
 
-
+    /*Dado que la DB MySQL no organiza la informacion en objeto JSON se tiene que, a fuerza bruta, dividir y organiza la informacion entrante
+    * Por eso la lista es un poco lenta*/
     private void parseJson(JSONArray jsonArray) {
         allData = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {

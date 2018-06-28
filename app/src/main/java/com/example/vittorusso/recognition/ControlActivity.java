@@ -105,10 +105,15 @@ public class ControlActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
 
+
         getSupportActionBar().setTitle(R.string.title_devices);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
+        /*Para la comunicacion de los 2 microcontroladores se crean "Fragmentos" para controlar cada uno
+        * Aqui se inicializa la activdad, si no estan creados los fragmentos se crean. Las "Activities" de cada
+        * "Fragmento" son FragmentDevice1&2.java*/
+        /*Aqui tambien estan los metodos que se utilizan cuando proviene informacion del fragmento a esta actividad (incomingHAR(), incomingHeartRate())*/
         if (savedInstanceState == null) {
             Frag1 = FragmentDevice1.newInstance(LilyHAR,MacLilyHAR);
             Frag1.setmListener1(new FragmentDevice1.OnFragmentInteractionListener() {
@@ -134,6 +139,8 @@ public class ControlActivity extends AppCompatActivity {
         tvHR.setVisibility(View.INVISIBLE);
         btnGo = findViewById(R.id.btnRec);
         ly = findViewById(R.id.layoutRec);
+        /*Este boton comienza las pendiciones a la base de datos de los labels como tambien corre el clasificador de manera remota
+        * Solamente si ambos dispositivos estan conectados*/
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,6 +148,7 @@ public class ControlActivity extends AppCompatActivity {
                     //isHAR && isHR
                     status = true;
                     ly.removeView(btnGo);
+                    /*Se crea de manera dinamica el textView donde sale la actividad*/
                     tvRec = new TextView(getApplicationContext());
                     tvRec.setText(getString(R.string.activity));
                     tvRec.setTextColor(getResources().getColor(R.color.colorAccent));
@@ -196,6 +204,8 @@ public class ControlActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /*Aqui se puede hacer la peticion a que se conecten los diapositivos mediante un metodo directamente al fragmento
+    * No funciona del todo bien pero aja, asi se deberia hacer*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -215,10 +225,12 @@ public class ControlActivity extends AppCompatActivity {
         return true;
     }
 
+    /*Este metodo se llama cada vez que hay datos entrantes del fragmento que maneja el microcontrolador de ritmo cardiaco*/
     private void incomingHeartRate(String data) {
         isHR = true;
         if(!data.isEmpty()){
             String array1[]= data.split("#");
+            /*Si el bit de validacion es 1 comienza la animacion y muestra el valor*/
             if(array1[1].contains("1")){
                 if (!pvState){
                     pv.startPulse();
@@ -237,6 +249,7 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
 
+    /*Este metodo se llama cada vez que hay datos entrantes del fragmento que maneja el microcontrolador del acelerometro*/
     private void incomingHAR(String data) {
         isHAR = true;
         recDataString.append(data);
@@ -257,9 +270,11 @@ public class ControlActivity extends AppCompatActivity {
                 ValuesY.add(numsensor1);
                 ValuesZ.add(numsensor2);
 
+                /*Cuanto se junten 20 datos se manda a la base de datos mediante el metodo asincrono de "SentHttp()"*/
                 if(ValuesX.size() == 20){
                     if(status){
                         new SendHttp().execute(createQuery(ValuesX,ValuesY,ValuesZ));
+                        Log.v("TAG","Sent HTTP Post");
                     }
                     ValuesX.clear();
                     ValuesY.clear();
@@ -272,7 +287,7 @@ public class ControlActivity extends AppCompatActivity {
     }
 
 
-
+    /*Este metodo crea el query de los 20 datos*/
     private String createQuery(ArrayList<Float> valuesX, ArrayList<Float> valuesY, ArrayList<Float> valuesZ) {
         StringBuilder query = new StringBuilder();
         StringBuilder arrayX = new StringBuilder();
@@ -313,6 +328,7 @@ public class ControlActivity extends AppCompatActivity {
         return query.toString();
     }
 
+    /*Metodo de envio a la DB*/
      class SendHttp extends AsyncTask <String,Void,Void> {
         @Override
         public Void doInBackground(String...params){
@@ -342,6 +358,7 @@ public class ControlActivity extends AppCompatActivity {
         }
     }
 
+    /*Metodo que consulta a la DB el label, se realiza de manera periodica de cada 2s, numero arbitrario*/
     private class runScript extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... item){
@@ -436,6 +453,9 @@ public class ControlActivity extends AppCompatActivity {
         return ((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
     }
 
+    /*Para la comunicacion bidireccional de los fragmentos se crean "Interfaces" las cuales tienen "Listeners"*/
+
+    /*Los siguientes dos metodos con tienen los metodos se se comunican de aqui al fragmento*/
     public interface updateFragment1 {
         void connectFrag1();
         void disconnectFrag1();
@@ -446,6 +466,7 @@ public class ControlActivity extends AppCompatActivity {
         void disconnectFrag2();
     }
 
+    /*Los siguientes 4 metodos se utilizan para inicializar los fragmentos y los interfaces*/
     public void setUpdateFrag1(updateFragment1 upd){
         this.upFrag1 = upd;
     }

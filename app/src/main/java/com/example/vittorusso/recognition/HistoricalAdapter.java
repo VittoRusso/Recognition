@@ -14,6 +14,7 @@ public class HistoricalAdapter extends RecyclerView.Adapter<HistoricalAdapter.My
     private ArrayList<ArrayList<DataLine>> DataGroups;
     private RecycleClickListener mListener;
 
+    /*Este es un adaptador de cada item de la lista la cual muestra informacion pertinente de cada session*/
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tvD1, tvD2, tvAc, tvHr;
 
